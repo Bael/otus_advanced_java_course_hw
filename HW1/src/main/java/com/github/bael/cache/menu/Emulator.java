@@ -1,10 +1,16 @@
 package com.github.bael.cache.menu;
 
 import com.github.bael.cache.Cache;
+import com.github.bael.cache.CacheLoadingException;
 import com.github.bael.cache.impl.FileLoader;
 import java.io.Console;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 public class Emulator {
+
+    private final static Logger logger = LoggerFactory.getLogger(Emulator.class);
     private final FileLoader fileLoader;
     private final Cache<String, String> cache;
 
@@ -14,7 +20,7 @@ public class Emulator {
     }
 
     public static void main(String[] args) {
-        System.out.println("Укажите директорию, где хранятся файлы для загрузки в кэш:");
+        logger.info("Укажите директорию, где хранятся файлы для загрузки в кэш:");
         Console console = System.console();
         String path = console.readLine();
         Emulator emulator = new Emulator(path);
@@ -27,16 +33,16 @@ public class Emulator {
             """;
         String command;
         do {
-            System.out.println("Наберите команду:\n" + availableCommand);
+            logger.info("Наберите команду:\n{}", availableCommand);
             var commandStr = console.readLine();
             if (commandStr.equalsIgnoreCase("выход")) {
-                System.out.println("Выходим.");
+                logger.info("Выходим.");
                 return;
             }
 
             String[] commandArr = commandStr.trim().split("\\s+");
             if (commandArr.length != 2) {
-                System.out.println("Некорректная команда, должно быть название команды и файла. ");
+                logger.info("Некорректная команда, должно быть название команды и файла. ");
                 continue;
             }
             command = commandArr[0];
@@ -44,18 +50,25 @@ public class Emulator {
 
             switch (command.trim().toLowerCase()) {
                 case "загрузить":
-                    emulator.cache.get(fileName);
-                    System.out.println(">Выполнено");
+                    emulator.loadFile(fileName);
+                    logger.info(">Выполнено");
                     break;
                 case "прочитать":
-                    System.out.println(emulator.cache.get(fileName));
-                    System.out.println(">Выполнено");
+                    logger.info(emulator.cache.get(fileName));
+                    logger.info(">Выполнено");
                     break;
                 default:
-                    System.out.println("Команда нераспознана.");
+                    logger.info("Команда нераспознана.");
             }
         } while (true);
     }
 
+    private void loadFile(String fileName) {
+        try {
+            cache.get(fileName);
+        } catch (CacheLoadingException e) {
+            logger.error("Ошибка загрузки файла: ", e);
+        }
+    }
 
 }

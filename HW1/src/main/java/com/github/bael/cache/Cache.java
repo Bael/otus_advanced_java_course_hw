@@ -18,7 +18,11 @@ public class Cache<T, ID> implements Cacheable<T, ID> {
         cacheInternal.computeIfAbsent(id, key -> new SoftReference<>(cacheLoader.load(id)));
 
         SoftReference<T> ref = cacheInternal.get(id);
-        return ref.get();
+        T value = ref == null ? null : ref.get();
+        if (value == null) {
+            cacheInternal.remove(id);
+        }
+        return value;
     }
 
     @Override

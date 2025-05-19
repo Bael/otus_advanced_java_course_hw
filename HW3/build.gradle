@@ -1,6 +1,5 @@
 plugins {
     id 'java'
-//    id 'application'
     id 'org.springframework.boot' version '3.4.5'
     id 'io.spring.dependency-management' version '1.1.7'
 }
@@ -15,12 +14,6 @@ java {
 
 }
 
-//application {
-//    applicationDefaultJvmArgs = listOf(
-//            "-XX:+HeapDumpOnOutOfMemoryError",
-//            "-XX:HeapDumpPath=/home/dk/work/temp/oomdump2.hprof"
-//    )
-//}
 
 configurations {
     compileOnly {
@@ -33,6 +26,7 @@ repositories {
 }
 
 dependencies {
+    implementation 'com.github.ben-manes.caffeine:caffeine'
     implementation 'org.springframework.boot:spring-boot-starter-cache'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-web'
